@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "149420826458",
+    "firebase_url": "https://iamfoodee-9fed5.firebaseio.com",
+    "project_id": "iamfoodee-9fed5",
+    "storage_bucket": "iamfoodee-9fed5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149420826458:android:558ad9403d6425be",
+        "android_client_info": {
+          "package_name": "com.example.swapnil.iamfoodee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "149420826458-nn8hq3qkac2bqjs623se9j78b2ld0hkf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMmxP5YakOMFaocfjtaIN-h41_ysB_Vms"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
