@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ff"
-    tools:context="com.example.swapnil.iamfoodee.SignUp">
+    tools:context="com.example.root.iamfoodeeserver.SignIn">
 
     <LinearLayout
         android:orientation="vertical"
@@ -25,23 +24,6 @@
             android:textColor="@android:color/white"
             android:textSize="34sp"
             android:inputType="phone"
-            app:met_baseColor="@android:color/white"
-            app:met_floatingLabel="highlight"
-            app:met_maxCharacters="11"
-            app:met_primaryColor="@android:color/white"
-            app:met_singleLineEllipsis="true"
-            />
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id = "@+id/edtName"
-            android:hint="Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
-            android:text="Adarsh Jaju"
-            android:textColor="@android:color/white"
-            android:textSize="34sp"
-            android:inputType="text"
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="11"
@@ -73,15 +55,15 @@
     <info.hoang8f.widget.FButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSignup"
-        android:text="Sign Up"
+        android:id="@+id/btnSignIn"
+        android:text="Sign In"
         android:textColor="@android:color/white"
         android:layout_weight="1"
         android:layout_margin="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
         android:layout_alignParentBottom="true"
-        app:buttonColor="@color/btnSignUp"
+        app:buttonColor="@color/btnSignActive"
         android:shadowColor="@android:color/black"
         app:shadowHeight="5dp"
         />
