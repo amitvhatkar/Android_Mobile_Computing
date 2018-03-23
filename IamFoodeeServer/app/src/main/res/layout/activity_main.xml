@@ -40,7 +40,7 @@
         android:weightSum="2"
         >
 
-        <info.hoang8f.widget.FButton
+        <!--<info.hoang8f.widget.FButton
             android:id="@+id/btnSignUp"
             android:text="Sign up"
             android:textColor="@android:color/white"
@@ -51,14 +51,14 @@
             app:buttonColor="@color/btnSignUp"
             android:shadowColor="@android:color/black"
             app:shadowHeight="5dp"
-            />
+            />-->
         <!--app:shadowEnabled="true"/>-->
         <!--app:cornerRadius="4dp"-->
 
 
 
         <info.hoang8f.widget.FButton
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnSignIn"
             android:text="Sign In"

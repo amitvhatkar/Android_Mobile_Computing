@@ -8,6 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.root.iamfoodeeserver.Model.Category;
+import com.example.root.iamfoodeeserver.ViewHolder.MenuViewHolder;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btnSignIn;
@@ -20,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnSignIn = (Button)findViewById(R.id.btnSignIn);
         slogan = (TextView)findViewById(R.id.txtSlogan);
-        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/NABILA.TTF");
+        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/Nabila.ttf");
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override

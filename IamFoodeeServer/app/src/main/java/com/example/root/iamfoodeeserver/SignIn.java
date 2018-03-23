@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,7 +40,7 @@ public class SignIn extends AppCompatActivity {
 
         //Init firebase
         db = FirebaseDatabase.getInstance();
-        users = db.getReference("Users");
+        users = db.getReference("User");
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
 
@@ -51,7 +52,7 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-    private void signInUser(final String phone, String password) {
+    private void signInUser(String phone, String password) {
         final ProgressDialog mDialog = new ProgressDialog(SignIn.this);
         mDialog.setMessage("Processing...");
         mDialog.show();
@@ -63,6 +64,8 @@ public class SignIn extends AppCompatActivity {
         users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Log.w("Data sanpshot",dataSnapshot.toString());
                 if(dataSnapshot.child(localPhone).exists()){
                     mDialog.dismiss();
                     User user = dataSnapshot.child(localPhone).getValue(User.class);
@@ -80,7 +83,8 @@ public class SignIn extends AppCompatActivity {
                         Toast.makeText(SignIn.this, "Please Login As Staff", Toast.LENGTH_SHORT).show();
                     }
                 }else{
-                    Toast.makeText(SignIn.this, "User not exists !!!", Toast.LENGTH_SHORT).show();
+                    mDialog.dismiss();
+                    Toast.makeText(SignIn.this, "User not exists !!!" + localPhone, Toast.LENGTH_SHORT).show();
                 }
             }
 
