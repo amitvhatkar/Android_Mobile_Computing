@@ -9,4 +9,6 @@ import com.example.root.iamfoodeeserver.Model.User;
 public class Common {
 
     public  static User currrentUser;
+    public static final String UPDATE = "UPDATE";
+    public static final String DELETE = "DELETE";
 }
