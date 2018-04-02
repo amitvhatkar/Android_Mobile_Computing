@@ -12,4 +12,5 @@
         android:icon="@drawable/ic_refresh_black_24dp"
         android:iconTint="@android:color/white"
         android:title="Refresh" />
+
 </menu>

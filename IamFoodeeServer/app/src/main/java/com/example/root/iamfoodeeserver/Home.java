@@ -218,6 +218,7 @@ public class Home extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == Common.PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+
                 && data != null && data.getData() != null){
             saveUri = data.getData();
             btnSelect.setText("Image Selected");
@@ -230,6 +231,7 @@ public class Home extends AppCompatActivity
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), Common.PICK_IMAGE_REQUEST);
+
     }
 
     private void loadMenu() {
@@ -242,6 +244,7 @@ public class Home extends AppCompatActivity
         ) {
             @Override
             protected void populateViewHolder(MenuViewHolder viewHolder, Category model, final int position) {
+
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage())
                         .into(viewHolder.imageView);
@@ -305,7 +308,6 @@ public class Home extends AppCompatActivity
             Intent orders=new Intent(Home.this,OrderStatus.class);
             startActivity(orders);
         }
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -9,6 +9,7 @@ import com.example.root.iamfoodeeserver.Model.User;
 public class Common {
 
     public  static User currrentUser;
+
     public static final String UPDATE = "Update";
     public static final String DELETE = "Delete";
     public static final int PICK_IMAGE_REQUEST = 71;
@@ -22,4 +23,5 @@ public class Common {
         else
             return "Shipped";
     }
+
 }
