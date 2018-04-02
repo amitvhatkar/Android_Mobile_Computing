@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Database.Database;
 import com.example.swapnil.iamfoodee.Model.Food;
 import com.example.swapnil.iamfoodee.Model.Order;
@@ -71,9 +72,16 @@ public class  FoodDetail extends AppCompatActivity {
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppbar);
 
         if(getIntent() != null)
-            foodId = getIntent().getStringExtra("FoodId");
+            foodId = getIntent().getStringExtra("foodId");
         if(!foodId.isEmpty()) {
-            getDetailFood(foodId);
+
+            if(Common.isConnectedToInternet(getBaseContext()))
+                getDetailFood(foodId);
+            else
+            {
+                Toast.makeText(FoodDetail.this, "Please check your Internet Connection!!", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
     }
 
