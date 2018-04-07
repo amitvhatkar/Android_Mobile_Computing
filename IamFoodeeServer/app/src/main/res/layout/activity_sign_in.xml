@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ff"
     tools:context="com.example.root.iamfoodeeserver.SignIn">
 
     <LinearLayout
@@ -24,7 +25,7 @@
             android:textColor="@android:color/white"
             android:textSize="34sp"
             android:inputType="phone"
-            app:met_baseColor="@android:color/white"
+            app:met_baseColor="@android:color/black"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="11"
             app:met_primaryColor="@android:color/white"
@@ -41,7 +42,7 @@
             android:textColor="@android:color/white"
             android:textSize="34sp"
             android:inputType="textPassword"
-            app:met_baseColor="@android:color/white"
+            app:met_baseColor="@android:color/black"
             app:met_floatingLabel="highlight"
             app:met_maxCharacters="11"
             app:met_primaryColor="@android:color/white"

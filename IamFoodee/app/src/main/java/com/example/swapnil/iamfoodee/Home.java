@@ -3,7 +3,6 @@ package com.example.swapnil.iamfoodee;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -21,14 +20,12 @@ import android.widget.Toast;
 import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Interface.ItemClickListener;
 import com.example.swapnil.iamfoodee.Model.Category;
-import com.example.swapnil.iamfoodee.Model.Order;
-import com.example.swapnil.iamfoodee.Service.ListenOrder;
+import com.example.swapnil.iamfoodee.Model.Token;
 import com.example.swapnil.iamfoodee.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import io.paperdb.Paper;
@@ -101,12 +98,22 @@ public class Home extends AppCompatActivity
             Toast.makeText(this, "Please check your Internet Connection!!", Toast.LENGTH_SHORT).show();
             return;
         }
+//
+//        //Register Service
+//        Intent service=new Intent(Home.this,ListenOrder.class);
+//        startService(service);
 
-        //Register Service
-        Intent service=new Intent(Home.this,ListenOrder.class);
-        startService(service);
+
+        updateToken(FirebaseInstanceId.getInstance().getToken());
 
 
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase db=FirebaseDatabase.getInstance();
+        DatabaseReference tokens=db.getReference("Tokens");
+        Token data=new Token(token,false);//false bcauz this token is sent from client
+        tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
     private void loadMenu() {

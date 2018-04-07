@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -12,11 +13,20 @@ import android.widget.Toast;
 
 import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Database.Database;
+import com.example.swapnil.iamfoodee.Model.MyResponse;
+import com.example.swapnil.iamfoodee.Model.Notification;
 import com.example.swapnil.iamfoodee.Model.Order;
 import com.example.swapnil.iamfoodee.Model.Request;
+import com.example.swapnil.iamfoodee.Model.Sender;
+import com.example.swapnil.iamfoodee.Model.Token;
+import com.example.swapnil.iamfoodee.Remote.APIService;
 import com.example.swapnil.iamfoodee.ViewHolder.CartAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -24,6 +34,9 @@ import java.util.List;
 import java.util.Locale;
 
 import info.hoang8f.widget.FButton;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Cart extends AppCompatActivity {
 
@@ -39,10 +52,15 @@ public class Cart extends AppCompatActivity {
     List<Order> cart = new ArrayList<>();
     CartAdapter cartAdapter;
 
+    APIService mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        //Init Service
+        mService =Common.getFCMService();
 
         //Firebase
         database = FirebaseDatabase.getInstance();
@@ -72,11 +90,15 @@ public class Cart extends AppCompatActivity {
                 {
                     //submit to fire base
                     //we will be using System.CurrentMilli as key
-                    requests.child(String.valueOf(System.currentTimeMillis())).setValue(request);
+                    String order_number=String.valueOf(System.currentTimeMillis());
+                    requests.child(order_number).setValue(request);
                     //Delete cart
                     new Database(getBaseContext()).clearCart();
+
+                    sendNotificationOrder(order_number);
                     Toast.makeText(Cart.this, "Thank You, Order Placed", Toast.LENGTH_SHORT).show();
                     finish();
+
                 }
                 else
                     Toast.makeText(Cart.this, "Your cart is Empty", Toast.LENGTH_SHORT).show();
@@ -86,6 +108,53 @@ public class Cart extends AppCompatActivity {
 
         loadListFood();
 
+    }
+
+    private void sendNotificationOrder(final String order_number) {
+        DatabaseReference tokens=FirebaseDatabase.getInstance().getReference("Tokens");
+        Query data=tokens.orderByChild("isServerToken").equalTo(true);
+        data.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot postSnapShot:dataSnapshot.getChildren())
+                {
+                    Token serverToken =postSnapShot.getValue(Token.class);
+
+                    Notification notification =new Notification("Swapnil" ,"You have new order "+order_number);
+                    Sender content=new Sender(serverToken.getToken(),notification);
+
+                    mService.sendNotification(content)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+
+                                   if(response.code()==200) { //Run only when get Result
+                                       if (response.body().success == 1) {
+                                           Toast.makeText(Cart.this, "Thank You, Order Placed", Toast.LENGTH_SHORT).show();
+                                           finish();
+                                       } else {
+                                           Toast.makeText(Cart.this, "Failed !!!", Toast.LENGTH_SHORT).show();
+
+                                       }
+                                   }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                    Log.e("ERROR",t.getMessage());
+
+                                }
+                            });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadListFood() {
