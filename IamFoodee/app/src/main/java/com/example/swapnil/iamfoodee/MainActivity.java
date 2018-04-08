@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             //Save user and Password
 
             final ProgressDialog mDialog = new ProgressDialog(MainActivity.this);
-            mDialog.setMessage("Please Waiting ...");
+            mDialog.setMessage("Please Wait ...");
             mDialog.show();
             table_user.addValueEventListener(new ValueEventListener() {
 

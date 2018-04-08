@@ -18,13 +18,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.rey.material.widget.CheckBox;
 
 import info.hoang8f.widget.FButton;
+import io.paperdb.Paper;
 
 public class SignIn extends AppCompatActivity {
 
     EditText edtPhone, edtPassword;
     Button btnSignIn;
+    CheckBox ckbRemember;
 
     FirebaseDatabase db;
     DatabaseReference users;
@@ -37,6 +40,10 @@ public class SignIn extends AppCompatActivity {
         edtPassword = (MaterialEditText)findViewById(R.id.edtPassword);
         edtPhone = (MaterialEditText)findViewById(R.id.edtPhone);
         btnSignIn = (FButton) findViewById(R.id.btnSignIn);
+        ckbRemember=(CheckBox)findViewById(R.id.ckbRemember);
+
+        //Init Paper
+        Paper.init(this);
 
         //Init firebase
         db = FirebaseDatabase.getInstance();
@@ -53,6 +60,13 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void signInUser(String phone, String password) {
+
+        //Save user and Password
+        if(ckbRemember.isChecked())
+        {
+            Paper.book().write(Common.USR_KEY,edtPhone.getText().toString());
+            Paper.book().write(Common.PWD_KEY,edtPassword.getText().toString());
+        }
         final ProgressDialog mDialog = new ProgressDialog(SignIn.this);
         mDialog.setMessage("Processing...");
         mDialog.show();
@@ -65,7 +79,7 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.w("Data sanpshot",dataSnapshot.toString());
+                Log.w("Data snapshot",dataSnapshot.toString());
                 if(dataSnapshot.child(localPhone).exists()){
                     mDialog.dismiss();
                     User user = dataSnapshot.child(localPhone).getValue(User.class);

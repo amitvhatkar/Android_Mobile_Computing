@@ -120,7 +120,8 @@ public class Cart extends AppCompatActivity {
                 {
                     Token serverToken =postSnapShot.getValue(Token.class);
 
-                    Notification notification =new Notification("Swapnil" ,"You have new order "+order_number);
+                   // Notification notification =new Notification("Swapnil" ,"You have new order "+order_number);
+                    Notification notification =new Notification("Yaay" ,"You have new order ");
                     Sender content=new Sender(serverToken.getToken(),notification);
 
                     mService.sendNotification(content)

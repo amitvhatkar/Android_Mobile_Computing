@@ -1,5 +1,9 @@
 package com.example.root.iamfoodeeserver.Common;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.example.root.iamfoodeeserver.Model.Request;
 import com.example.root.iamfoodeeserver.Model.User;
 import com.example.root.iamfoodeeserver.Remote.APIService;
@@ -19,7 +23,9 @@ public class Common {
     public  static Request currentRequest;
 
     public static final String UPDATE = "Update";
-    public static final String DELETE = "Delete";
+    public static final String DELETE = "Deny";
+    public static final String USR_KEY ="User";
+    public static final String PWD_KEY ="Password";
     public static final int PICK_IMAGE_REQUEST = 71;
 
     private static final String baseUrl="https://maps.googleapis.com";
@@ -36,9 +42,9 @@ public class Common {
         if(code.equals("0"))
             return "Placed";
         else  if(code.equals("1"))
-            return "On my way";
+            return "Accepted";
         else
-            return "Shipped";
+            return "Delivered";
     }
 
     public static String getDate(long time)
@@ -50,6 +56,26 @@ public class Common {
                 ,calendar).toString());
         return  date.toString();
 
+    }
+
+    public static boolean isConnectedToInternet (Context context)
+    {
+        ConnectivityManager connectivityManager =(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if(connectivityManager != null)
+        {
+            NetworkInfo[] info= connectivityManager.getAllNetworkInfo();
+            if(info != null)
+            {
+                for(int i=0;i<info.length;i++)
+                {
+                    if(info[i].getState() == NetworkInfo.State.CONNECTED)
+                        return  true;
+                }
+            }
+        }
+
+        return false;
     }
 
 }

@@ -49,6 +49,7 @@ import com.squareup.picasso.Picasso;
 import java.util.UUID;
 
 import info.hoang8f.widget.FButton;
+import io.paperdb.Paper;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -330,15 +331,18 @@ public class Home extends AppCompatActivity
         }
         else  if(id == R.id.nav_sign_out)
         {
+            //Delete remember me data
+            Paper.book().destroy();
+
             Intent signIn=new Intent(Home.this,SignIn.class);
             signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(signIn);
         }
 
-        else if(id==R.id.nav_cart)
-        {
-            Toast.makeText(this, "As of now this functionality is not provided for Server...", Toast.LENGTH_SHORT).show();
-        }
+//        else if(id==R.id.nav_cart)
+//        {
+//            Toast.makeText(this, "As of now this functionality is not provided for Server...", Toast.LENGTH_SHORT).show();
+//        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

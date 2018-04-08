@@ -61,7 +61,7 @@ public class SignIn extends AppCompatActivity {
                     }
 
                     final ProgressDialog mDialog = new ProgressDialog(SignIn.this);
-                    mDialog.setMessage("Please Waiting ...");
+                    mDialog.setMessage("Please Wait ...");
                     mDialog.show();
                     table_user.addValueEventListener(new ValueEventListener() {
 
@@ -76,13 +76,20 @@ public class SignIn extends AppCompatActivity {
                                 mDialog.dismiss();
                                 User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
                                 user.setPhone(edtPhone.getText().toString());
-                                if (user.getPassword().equals(edtPassword.getText().toString())) {
-                                    Intent homeIntent = new Intent(SignIn.this, Home.class);
-                                    Common.currentUser = user;
-                                    startActivity(homeIntent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(SignIn.this, "Sign in failed !", Toast.LENGTH_SHORT).show();
+                                if(!isEmpty(edtPhone,edtPassword))
+                                {
+                                    if (user.getPassword().equals(edtPassword.getText().toString())) {
+                                        Intent homeIntent = new Intent(SignIn.this, Home.class);
+                                        Common.currentUser = user;
+                                        startActivity(homeIntent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(SignIn.this, "Sign in failed !", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                else
+                                {
+                                    Toast.makeText(SignIn.this, "Empty Fields not allowed   ", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 mDialog.dismiss();
@@ -105,5 +112,12 @@ public class SignIn extends AppCompatActivity {
             }
 
         });
+    }
+
+    private boolean isEmpty(EditText edtPhone, EditText edtPassword) {
+        if (edtPhone.getText().toString().trim().length() > 0  && edtPassword.getText().toString().trim().length() > 0 )
+            return false;
+
+        return true;
     }
 }

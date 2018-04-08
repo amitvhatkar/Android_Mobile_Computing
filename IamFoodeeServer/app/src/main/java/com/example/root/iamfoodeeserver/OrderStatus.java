@@ -124,12 +124,12 @@ public class OrderStatus extends AppCompatActivity {
             showUpdateDialog(adapter.getRef(item.getOrder()).getKey(),adapter.getItem(item.getOrder()));
         }
         else if(item.getTitle().equals(Common.DELETE))
-            deleteOrder(adapter.getRef(item.getOrder()).getKey());
+            deleteOrder(adapter.getRef(item.getOrder()).getKey(),adapter.getItem(item.getOrder()));
         return super.onContextItemSelected(item);
     }
 
-    private void deleteOrder(String key) {
-
+    private void deleteOrder(String key, final Request item) {
+        sendDeleteOrderStatusToUser(key,item);
         Toast.makeText(this, "Order deleted", Toast.LENGTH_SHORT).show();
         requests.child(key).removeValue();
     }
@@ -144,7 +144,7 @@ public class OrderStatus extends AppCompatActivity {
         final View view=inflater.inflate(R.layout.update_order_layout,null);
 
         spinner =(MaterialSpinner) view.findViewById(R.id.statusSpinner);
-        spinner.setItems("Placed","On my Way","Shipped");
+        spinner.setItems("Placed","Accepted","Delivered");
 
         alertDialog.setView(view);
 
@@ -182,7 +182,8 @@ public class OrderStatus extends AppCompatActivity {
                         {
                             Token token =postSnapShot.getValue(Token.class);
 
-                            Notification notification =new Notification("Swapnil" ,"You order "+key + "was updated ");
+                           // Notification notification =new Notification("Food4U" ,"Your order "+key + " was updated ");
+                            Notification notification =new Notification("Food4U" ,"Your order was updated ");
 
                             Sender content=new Sender(token.getToken(),notification);
 
@@ -200,6 +201,59 @@ public class OrderStatus extends AppCompatActivity {
                                             else
                                             {
                                                 Toast.makeText(OrderStatus.this, "Order was Updated but failed to send notification !!!", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                            Log.e("ERROR",t.getMessage());
+
+                                        }
+                                    });
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void sendDeleteOrderStatusToUser(final String key,Request item) {
+
+        DatabaseReference tokens =db.getReference("Tokens");
+        tokens.orderByKey().equalTo(item.getPhone())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot postSnapShot:dataSnapshot.getChildren())
+                        {
+                            Token token =postSnapShot.getValue(Token.class);
+
+                           // Notification notification =new Notification("Food4U" ,"Your order "+key + " was deleted ");
+                            Notification notification =new Notification("Food4U" ,"Your order was deleted ");
+
+                            Sender content=new Sender(token.getToken(),notification);
+
+
+
+                            mService.sendNotification(content)
+                                    .enqueue(new Callback<MyResponse>() {
+                                        @Override
+                                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                            if(response.body().success==1)
+                                            {
+                                                Toast.makeText(OrderStatus.this, "Order was Deleted", Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(OrderStatus.this, "Order was Deleted but failed to send notification !!!", Toast.LENGTH_SHORT).show();
 
                                             }
                                         }
