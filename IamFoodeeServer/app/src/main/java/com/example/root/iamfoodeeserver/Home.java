@@ -370,13 +370,17 @@ public class Home extends AppCompatActivity
 
         //First, we need to get all food in cateogry
         DatabaseReference foods=database.getReference("Foods");
+        //Toast.makeText(this, "kk", Toast.LENGTH_SHORT).show();
         Query foodInCategory=foods.orderByChild("menuId").equalTo(key);
         foodInCategory.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //Toast.makeText(Home.this, "lol", Toast.LENGTH_SHORT).show();
                 for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
                 {
+                  //  Toast.makeText(Home.this, "I was here", Toast.LENGTH_SHORT).show();
                     postSnapshot.getRef().removeValue();
+                  //  Toast.makeText(Home.this, "Food deleted", Toast.LENGTH_SHORT).show();
                 }
             }
 

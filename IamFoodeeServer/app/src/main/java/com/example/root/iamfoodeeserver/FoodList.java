@@ -108,7 +108,7 @@ public class FoodList extends AppCompatActivity {
         //Same code as home-showDialog
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(FoodList.this);
         alertDialog.setTitle("Add New Food");
-        alertDialog.setMessage("Info Required:");
+        alertDialog.setMessage("Info Required::");
 
         LayoutInflater inflater = this.getLayoutInflater();
         View add_menu_layout =  inflater.inflate(R.layout.add_new_food_layout, null);
@@ -279,6 +279,7 @@ public class FoodList extends AppCompatActivity {
     }
 
     private void deleteFood(String key) {
+        Toast.makeText(this, "Food Item Deleted", Toast.LENGTH_SHORT).show();
         foodList.child(key).removeValue();
     }
 
