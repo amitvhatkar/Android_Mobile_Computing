@@ -3,6 +3,7 @@ package com.example.swapnil.iamfoodee.ViewHolder;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Interface.ItemClickListener;
 import com.example.swapnil.iamfoodee.Model.Order;
 import com.example.swapnil.iamfoodee.R;
@@ -23,7 +25,9 @@ import java.util.Locale;
  * Created by root on 21/3/18.
  */
 
-class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+
+    ,View.OnCreateContextMenuListener{
 
     public TextView text_cart_name,
             txt_price;
@@ -41,10 +45,19 @@ class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickList
         text_cart_name = (TextView)itemView.findViewById(R.id.cart_item_name);
         txt_price = (TextView)itemView.findViewById(R.id.cart_item_price);
         img_cart_count = (ImageView)itemView.findViewById(R.id.cart_item_count);
+
+        itemView.setOnCreateContextMenuListener(this);
     }
 
     @Override
     public void onClick(View view) {
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+        contextMenu.setHeaderTitle("Select Action");
+        contextMenu.add(0,0,getAdapterPosition(), Common.DELETE);
 
     }
 }

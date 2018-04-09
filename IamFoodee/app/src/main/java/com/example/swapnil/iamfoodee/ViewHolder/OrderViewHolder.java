@@ -13,7 +13,7 @@ import com.example.swapnil.iamfoodee.R;
 
 public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public TextView txtOrderId, txtOrderStatus, txtOrderPhone;
+    public TextView txtOrderId, txtOrderStatus, txtOrderPhone,txtOrderDate;
     private ItemClickListener itemClickListener;
 
     public OrderViewHolder(View itemView) {
@@ -22,6 +22,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         txtOrderId = (TextView)itemView.findViewById(R.id.order_id);
         txtOrderPhone= (TextView)itemView.findViewById(R.id.order_phone);
         txtOrderStatus= (TextView)itemView.findViewById(R.id.order_status);
+        txtOrderDate= (TextView)itemView.findViewById(R.id.order_date);
 
         itemView.setOnClickListener(this);
     }

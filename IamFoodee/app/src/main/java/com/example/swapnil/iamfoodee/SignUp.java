@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,32 +38,56 @@ public class SignUp extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
-                mDialog.setMessage("Please Waiting ...");
-                mDialog.show();
+                if(Common.isConnectedToInternet(getBaseContext())) {
 
-                table_user.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.child(edtPhone.getText().toString()).exists()) {
-                            mDialog.dismiss();
-                            Toast.makeText(SignUp.this,"Phone Number already registered",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            mDialog.dismiss();
-                            User user = new User(edtName.getText().toString(),edtpassword.getText().toString());
-                            table_user.child(edtPhone.getText().toString()).setValue(user);
-                            Toast.makeText(SignUp.this,"Sign up successfull",Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                    if(!isEmpty(edtPhone,edtpassword,edtName)) {
+                        final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
+                        mDialog.setMessage("Please Waiting ...");
+                        mDialog.show();
+
+                        table_user.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
+                                    mDialog.dismiss();
+                                    Toast.makeText(SignUp.this, "Phone Number already registered", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    mDialog.dismiss();
+                                    User user = new User(edtName.getText().toString(), edtpassword.getText().toString());
+                                    table_user.child(edtPhone.getText().toString()).setValue(user);
+                                    Toast.makeText(SignUp.this, "Sign up successfull", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
+                    else
+                    {
+                        Toast.makeText(SignUp.this, "Empty Fields not allowed   ", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+
+                else
+                {
+                    Toast.makeText(SignUp.this, "Please check your Internet Connection!!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
+    }
+
+    private boolean isEmpty(MaterialEditText edtPhone, MaterialEditText edtpassword, MaterialEditText edtName) {
+
+        if (edtPhone.getText().toString().trim().length() > 0  && edtpassword.getText().toString().trim().length() > 0 && edtName.getText().toString().trim().length() > 0 )
+            return false;
+
+        return true;
     }
 }

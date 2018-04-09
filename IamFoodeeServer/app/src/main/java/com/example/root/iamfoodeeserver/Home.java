@@ -27,12 +27,18 @@ import android.widget.Toast;
 import com.example.root.iamfoodeeserver.Common.Common;
 import com.example.root.iamfoodeeserver.Interface.ItemClickListener;
 import com.example.root.iamfoodeeserver.Model.Category;
+import com.example.root.iamfoodeeserver.Model.Token;
 import com.example.root.iamfoodeeserver.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -43,6 +49,7 @@ import com.squareup.picasso.Picasso;
 import java.util.UUID;
 
 import info.hoang8f.widget.FButton;
+import io.paperdb.Paper;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,7 +75,7 @@ public class Home extends AppCompatActivity
 
     Category newCategory;
     Uri saveUri;
-    private final int PICK_IMAGE_REQUEST = 71;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +111,7 @@ public class Home extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         txtFullName = (TextView)headerView.findViewById(R.id.txtFullName);
-        txtFullName.setText(Common.currrentUser.getName());
+        txtFullName.setText(Common.currentUser.getName());
 
 
         recycler_menu = (RecyclerView)findViewById(R.id.recycler_menu);
@@ -113,6 +120,20 @@ public class Home extends AppCompatActivity
         recycler_menu.setLayoutManager(layoutManager);
         
         loadMenu();
+
+        //Send Token
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
+//        //Call Service
+//        Intent service=new Intent(Home.this, ListenOrder.class);
+//        startService(service);
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase db=FirebaseDatabase.getInstance();
+        DatabaseReference tokens=db.getReference("Tokens");
+        Token data=new Token(token,true);//true bcauz this token is sent from Server
+        tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
     private void showDialog() {
@@ -217,7 +238,8 @@ public class Home extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+        if(requestCode == Common.PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+
                 && data != null && data.getData() != null){
             saveUri = data.getData();
             btnSelect.setText("Image Selected");
@@ -229,7 +251,8 @@ public class Home extends AppCompatActivity
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Common.PICK_IMAGE_REQUEST);
+
     }
 
     private void loadMenu() {
@@ -241,7 +264,8 @@ public class Home extends AppCompatActivity
 
         ) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, final int position) {
+
                 viewHolder.txtMenuName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage())
                         .into(viewHolder.imageView);
@@ -249,7 +273,10 @@ public class Home extends AppCompatActivity
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int posittion, boolean isLongClick) {
-
+                            //Send CategoryID and start new activity
+                        Intent foodList = new Intent(Home.this,FoodList.class);
+                        foodList.putExtra("CategoryId",adapter.getRef(position).getKey());
+                        startActivity(foodList);
                     }
                 });
             }
@@ -297,6 +324,25 @@ public class Home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if(id == R.id.nav_orders)
+        {
+            Intent orders=new Intent(Home.this,OrderStatus.class);
+            startActivity(orders);
+        }
+        else  if(id == R.id.nav_sign_out)
+        {
+            //Delete remember me data
+            Paper.book().destroy();
+
+            Intent signIn=new Intent(Home.this,SignIn.class);
+            signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(signIn);
+        }
+
+//        else if(id==R.id.nav_cart)
+//        {
+//            Toast.makeText(this, "As of now this functionality is not provided for Server...", Toast.LENGTH_SHORT).show();
+//        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -321,6 +367,29 @@ public class Home extends AppCompatActivity
     }
 
     private void deleteCategory(String key) {
+
+        //First, we need to get all food in cateogry
+        DatabaseReference foods=database.getReference("Foods");
+        //Toast.makeText(this, "kk", Toast.LENGTH_SHORT).show();
+        Query foodInCategory=foods.orderByChild("menuId").equalTo(key);
+        foodInCategory.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //Toast.makeText(Home.this, "lol", Toast.LENGTH_SHORT).show();
+                for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                {
+                  //  Toast.makeText(Home.this, "I was here", Toast.LENGTH_SHORT).show();
+                    postSnapshot.getRef().removeValue();
+                  //  Toast.makeText(Home.this, "Food deleted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         categories.child(key).removeValue();
         Toast.makeText(this, "Category Deleted", Toast.LENGTH_SHORT).show();
     }

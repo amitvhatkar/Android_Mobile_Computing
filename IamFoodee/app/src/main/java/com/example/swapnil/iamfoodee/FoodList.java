@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.swapnil.iamfoodee.Common.Common;
 import com.example.swapnil.iamfoodee.Interface.ItemClickListener;
 import com.example.swapnil.iamfoodee.Model.Food;
 import com.example.swapnil.iamfoodee.ViewHolder.FoodViewHolder;
@@ -55,7 +56,14 @@ public class FoodList extends AppCompatActivity {
 
         }
         if(!categoryId.isEmpty() && categoryId!=null){
-            loadListFood(categoryId);
+
+            if(Common.isConnectedToInternet(getBaseContext()))
+                loadListFood(categoryId);
+            else
+            {
+                Toast.makeText(FoodList.this, "Please check your Internet Connection!!", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
 
@@ -66,7 +74,7 @@ public class FoodList extends AppCompatActivity {
         adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(Food.class,
                 R.layout.food_item,
                 FoodViewHolder.class,
-                foodList.orderByChild("MenuId").equalTo(categoryId)  // like Select * from Foods where MenuId=catgeoryId
+                foodList.orderByChild("menuId").equalTo(categoryId)  // like Select * from Foods where MenuId=catgeoryId
                 ) {
             @Override
             protected void populateViewHolder(FoodViewHolder viewHolder, Food model, int position) {
@@ -81,7 +89,7 @@ public class FoodList extends AppCompatActivity {
                     public void onClick(View view, int position, boolean isLongClick) {
 
                         Intent foodDetail=new Intent(FoodList.this,FoodDetail.class);
-                        foodDetail.putExtra("FoodId",adapter.getRef(position).getKey()); //send food ID to new activity
+                        foodDetail.putExtra("foodId",adapter.getRef(position).getKey()); //send food ID to new activity
                         startActivity(foodDetail);
                         
                     }

@@ -11,11 +11,11 @@
             android:title="Menu" />
 
 
-        <item
+      <!--  <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/ic_shopping_cart_black_24dp"
             android:iconTint="@android:color/white"
-            android:title="Cart" />
+            android:title="Cart" />-->
 
 
         <item
