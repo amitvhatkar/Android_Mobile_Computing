@@ -43,6 +43,8 @@ public class Cart extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
 
+    boolean isAnyOutlateOpen = false;
+
     FirebaseDatabase database;
     DatabaseReference requests;
 
@@ -86,29 +88,57 @@ public class Cart extends AppCompatActivity {
                         txtTotalPrice.getText().toString(),
                         cart
                 );
-                if(cart.size()!=0)
-                {
-                    //submit to fire base
-                    //we will be using System.CurrentMilli as key
-                    String order_number=String.valueOf(System.currentTimeMillis());
-                    requests.child(order_number).setValue(request);
-                    //Delete cart
-                    new Database(getBaseContext()).clearCart();
+                DatabaseReference outlateMeta = FirebaseDatabase.getInstance().getReference("OutlateMeta");
+                outlateMeta.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot dataValue:
+                                    dataSnapshot.getChildren()){
 
-                    sendNotificationOrder(order_number);
-                    Toast.makeText(Cart.this, "Thank You, Order Placed", Toast.LENGTH_SHORT).show();
-                    finish();
+                                if(dataValue.child("isOpen").getValue().toString().equals("true")){
+                                    isAnyOutlateOpen = true;
+                                }
 
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                        if(isAnyOutlateOpen) {
+                        //submit to fire base
+                        //we will be using System.CurrentMilli as key
+                                if (cart.size() != 0) {
+                                    String order_number = String.valueOf(System.currentTimeMillis());
+                                    requests.child(order_number).setValue(request);
+                                    //Delete cart
+                                    new Database(getBaseContext()).clearCart();
+
+                                    sendNotificationOrder(order_number);
+                                    Toast.makeText(Cart.this, "Thank You, Order Placed", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(Cart.this, "Your cart is Empty", Toast.LENGTH_SHORT).show();
+                                }
+                                }
+                                else{
+                                    Toast.makeText(Cart.this, "All Outlates Are Closed!!!", Toast.LENGTH_SHORT).show();
+                                }
+
+                        }
+                    });
+
+
+                    loadListFood();
                 }
-                else
-                    Toast.makeText(Cart.this, "Your cart is Empty", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
-        loadListFood();
 
-    }
+
+
 
     private void sendNotificationOrder(final String order_number) {
         DatabaseReference tokens=FirebaseDatabase.getInstance().getReference("Tokens");

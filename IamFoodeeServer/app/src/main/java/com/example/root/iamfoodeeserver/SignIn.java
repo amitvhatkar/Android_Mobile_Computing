@@ -31,6 +31,7 @@ public class SignIn extends AppCompatActivity {
 
     FirebaseDatabase db;
     DatabaseReference users;
+    DatabaseReference outlateMeta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class SignIn extends AppCompatActivity {
         //Init firebase
         db = FirebaseDatabase.getInstance();
         users = db.getReference("User");
+        outlateMeta = db.getReference("OutlateMeta");
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
 
@@ -86,8 +88,17 @@ public class SignIn extends AppCompatActivity {
                     user.setPhone(localPhone);
                     if(Boolean.parseBoolean(user.getIsStaff())){
                         if(user.getPassword().equals(localPassword)){
+
+
+
                             Intent login = new Intent(SignIn.this, Home.class);
                             Common.currentUser = user;
+                            //OutlateMeta outlate = dataSnapshot.child(localPhone).getValue(OutlateMeta.class);
+                            //outlate.setIsOpen("true");
+                            //HashMap<String, Object> result = new HashMap<>();
+                            //result.put(localPhone, "true");
+                            outlateMeta.child(Common.currentUser.getPhone()).child("isOpen").setValue("true");
+                            //finish();
                             startActivity(login);
                             finish();
                         }else{
@@ -108,4 +119,27 @@ public class SignIn extends AppCompatActivity {
             }
         });
     }
+
+    /*private void changeOpenStatus(final String localPhone) {
+        outlateMeta.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(localPhone).exists()) {
+
+                    Log.w("ping pong", "signin");
+                    //OutlateMeta outlate = dataSnapshot.child(localPhone).getValue(OutlateMeta.class);
+                    //outlate.setIsOpen("true");
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put(localPhone, "true");
+                    outlateMeta.updateChildren(result);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
 }

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,8 @@ public class SignIn extends AppCompatActivity {
     EditText edtPhone,edtPassword;
     Button btnSignIn;
     CheckBox ckbRemember;
+
+    boolean isAnyOutlateOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +77,45 @@ public class SignIn extends AppCompatActivity {
 
                                 //Get User Information
                                 mDialog.dismiss();
-                                User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+                                final User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
                                 user.setPhone(edtPhone.getText().toString());
                                 if(!isEmpty(edtPhone,edtPassword))
                                 {
-                                    if (user.getPassword().equals(edtPassword.getText().toString())) {
-                                        Intent homeIntent = new Intent(SignIn.this, Home.class);
-                                        Common.currentUser = user;
-                                        startActivity(homeIntent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(SignIn.this, "Sign in failed !", Toast.LENGTH_SHORT).show();
-                                    }
+
+                                    //boolean isOutlateOpen = checkAvailabilityOfOutlets();
+                                    //checkAvailabilityOfOutlets();
+                                    DatabaseReference outlateMeta = FirebaseDatabase.getInstance().getReference("OutlateMeta");
+                                    outlateMeta.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot dataValue:
+                                                    dataSnapshot.getChildren()){
+
+                                                if(dataValue.child("isOpen").getValue().toString().equals("true")){
+                                                    isAnyOutlateOpen = true;
+                                                }
+
+                                            }
+                                            if(isAnyOutlateOpen){
+                                                if (user.getPassword().equals(edtPassword.getText().toString())) {
+                                                    Intent homeIntent = new Intent(SignIn.this, Home.class);
+                                                    Common.currentUser = user;
+                                                    startActivity(homeIntent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(SignIn.this, "Sign in failed !", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            else{
+                                                Toast.makeText(SignIn.this, "All Outlates Are Clsoed Now !!!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
                                 else
                                 {

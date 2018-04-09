@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -60,6 +61,7 @@ public class Home extends AppCompatActivity
     //Firebase
     FirebaseDatabase database;
     DatabaseReference categories;
+    DatabaseReference outlateMeta;
     FirebaseStorage storage;
     StorageReference storageReference;
     FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
@@ -88,6 +90,7 @@ public class Home extends AppCompatActivity
         //Init Firebase
         database = FirebaseDatabase.getInstance();
         categories = database.getReference("Category");
+        outlateMeta = database.getReference("OutlateMeta");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
@@ -324,6 +327,8 @@ public class Home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Log.w("cause of ping pong","insde nav itm selected");
+
         if(id == R.id.nav_orders)
         {
             Intent orders=new Intent(Home.this,OrderStatus.class);
@@ -331,12 +336,22 @@ public class Home extends AppCompatActivity
         }
         else  if(id == R.id.nav_sign_out)
         {
+            //changeOpenStatus(Common.currentUser.getPhone());
+
+            //HashMap<String, Object> result = new HashMap<>();
+            //result.put(Common.currentUser.getPhone(), "false");
+            outlateMeta.child(Common.currentUser.getPhone()).child("isOpen").setValue("false");
+            //outlate.setIsOpen("true");
+            //HashMap<String, Object> result = new HashMap<>();
+            //result.put(localPhone, "true");
+            //outlateMeta.child(localPhone).setValue(outlate);
+
             //Delete remember me data
             Paper.book().destroy();
 
-            Intent signIn=new Intent(Home.this,SignIn.class);
-            signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(signIn);
+            Intent mainActivityIntent=new Intent(Home.this,MainActivity.class);
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(mainActivityIntent);
         }
 
 //        else if(id==R.id.nav_cart)
@@ -350,8 +365,29 @@ public class Home extends AppCompatActivity
         return true;
     }
 
-    //Update / Delete
+    /*private void changeOpenStatus(final String localPhone) {
+        outlateMeta.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(localPhone).exists()) {
 
+                    Log.w("ping pong", "signout");
+                    //OutlateMeta outlate = dataSnapshot.child(localPhone).getValue(OutlateMeta.class);
+                    //outlate.setIsOpen("false");
+                    //outlateMeta.child(localPhone).setValue(outlate);
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put(localPhone, "false");
+                    outlateMeta.updateChildren(result);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
