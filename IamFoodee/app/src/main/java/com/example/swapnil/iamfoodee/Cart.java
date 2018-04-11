@@ -124,8 +124,14 @@ public class Cart extends AppCompatActivity {
                                     Toast.makeText(Cart.this, "Your cart is Empty", Toast.LENGTH_SHORT).show();
                                 }
                                 }
-                                else{
-                                    Toast.makeText(Cart.this, "All Outlates Are Closed!!!", Toast.LENGTH_SHORT).show();
+                                else {
+                                    int i = 0;
+                                    if (i == 0) {
+                                        Toast.makeText(Cart.this, "Press again for confirmation", Toast.LENGTH_SHORT).show();
+                                        i++;
+                                    } else {
+                                        Toast.makeText(Cart.this, "All Outlets Are Closed!!!", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
 
                         }
